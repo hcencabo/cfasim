@@ -1,4 +1,4 @@
-# CFA Sample Size — Monte Carlo Shiny App
+# CFA Sample Size Simulator 
 
 Monte Carlo power analysis for Confirmatory Factor Analysis (CFA) using
 **simsem** and **lavaan**, implementing the Wolf et al. (2013) method.
