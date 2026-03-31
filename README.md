@@ -1,7 +1,8 @@
-# CFA Sample Size Simulator 
+# CFA Sample Size Simulator
 
 Monte Carlo power analysis for Confirmatory Factor Analysis (CFA) using
-**simsem** and **lavaan**, implementing the Wolf et al. (2013) method.
+**simsem** and **lavaan**, implementing the Wolf et al. (2013) method
+with targeted bias checking for high-risk parameter combinations.
 
 ---
 
@@ -9,10 +10,11 @@ Monte Carlo power analysis for Confirmatory Factor Analysis (CFA) using
 
 ```
 cfa_samplesize_app/
-├── app.R        — Entry point (sources the 3 files below)
-├── global.R     — Libraries, parallel backend setup, helper functions
-├── ui.R         — Shiny UI definition (Apple-style light theme)
-├── server.R     — Reactive server logic (async parallel simulation)
+├── app.R        — Entry point
+├── global.R     — Libraries, parallel backend, model builders,
+│                  bias flag detection, simulation worker
+├── ui.R         — Shiny UI (Apple-style light theme, bias banner)
+├── server.R     — Reactive server logic (async parallel, bias-aware)
 └── README.md    — This file
 ```
 
@@ -36,45 +38,75 @@ install.packages(c(
 shiny::runApp("path/to/cfa_samplesize_app")
 ```
 
-Or open `app.R` in RStudio and click **Run App**.
+---
+
+## Bias Checking — When and Why
+
+Standard adequacy criteria (power ≥ .80, RMSEA < .05, CFI > .95) are
+applied for all runs. Three additional bias checks are activated
+automatically based on detected parameter combinations:
+
+### Flag 1 — Factor correlation at boundary values
+**Triggered when:** `factor_cor ≥ .50` OR `factor_cor ≤ .10` AND
+`n_factors > 1`
+
+Correlation estimates are prone to bias at these extremes, particularly
+at smaller N. This matters most when discriminant or convergent validity
+is the research aim. The check computes relative bias on all
+factor-to-factor correlation parameters:
+
+```
+bias = |mean_estimated_cor − true_cor| / |true_cor|
+```
+
+Rejects N if bias > 5% on any factor correlation.
+
+### Flag 2 — Weak loadings (≤ .40)
+**Triggered when:** `loading_value ≤ .40`
+
+Wolf et al. (2013) did not evaluate loadings below .50. At these values
+and small N, estimates are pulled toward zero (attenuation). The check
+computes relative bias on all factor loading parameters:
+
+```
+bias = |mean_estimated_loading − true_loading| / |true_loading|
+```
+
+Rejects N if bias > 5% on any loading.
+
+### Flag 3 — Identification boundary (3 indicators per factor)
+**Triggered when:** any factor has exactly 3 indicators
+
+Three-indicator factors are overidentified by only 1 df. They are
+structurally fragile at small N, producing Heywood cases and
+non-convergence at higher rates than larger indicator sets. The check
+raises the convergence threshold from descriptive reporting to a hard
+gate: **convergence rate must be ≥ 98%**.
 
 ---
 
-## Performance Design
+## Important Note on Replications and Bias
 
-### Parallel execution
-All candidate N values are dispatched **simultaneously** to background R
-processes using `future` + `furrr::future_map_dfr()`. On a 4-core machine,
-7 candidate N values finish in roughly the time one used to take.
-
-Workers used = `detectCores(logical=FALSE) - 1` (one core reserved for the
-Shiny UI process).
-
-### Non-blocking UI
-The parallel block runs inside `future_promise({})`. The Shiny event loop
-is never blocked — the browser stays interactive while workers compute.
-Results arrive via a `then()` callback that writes to `reactiveValues` once.
-
-### Zero in-loop overhead
-The old design wrote to `reactiveValues` and called `incProgress()` on
-every iteration, forcing serial execution and triggering a re-render per
-step. The new design makes **one** state update when all workers finish.
-
-### Deterministic seeds
-Each worker seeds as `user_seed + N`, giving different but fully
-reproducible random streams regardless of the order workers finish.
+Bias estimates computed from simulation are themselves subject to
+Monte Carlo error. At 200–500 replications, a true bias of 4.8% may
+appear as 6% or 3% by chance. The app displays a warning when bias
+checks are active and nRep < 1000. For publication-level bias
+assessment, use **1000 replications**.
 
 ---
 
-## Adequacy Criteria (Wolf et al., 2013)
+## Adequacy Criteria Summary
 
-| Criterion | Threshold |
-|---|---|
-| Minimum loading power | ≥ .80 |
-| Mean RMSEA | < .05 |
-| Mean CFI | > .95 |
+| Criterion | Applies | Threshold |
+|---|---|---|
+| Min loading power | Always | ≥ .80 |
+| Mean RMSEA | Always | < .05 |
+| Mean CFI | Always | > .95 |
+| Convergence rate | Flag 3 (3-indicator) | ≥ 98% |
+| Loading bias | Flag 2 (loading ≤ .40) | < 5% |
+| Factor correlation bias | Flag 1 (cor ≥ .50 or ≤ .10) | < 5% |
 
-**Recommended N** = smallest N where **all three** criteria are met simultaneously.
+**Recommended N** = smallest N where ALL applicable criteria are met.
 
 ---
 

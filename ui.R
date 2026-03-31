@@ -412,6 +412,55 @@ ui <- fluidPage(
         line-height : 1.7;
       }
 
+      /* ── Bias warning banner ─────────────────────────────────── */
+      #bias_banner {
+        background    : #fffbf0;
+        border        : 1px solid #f5d87a;
+        border-radius : 10px;
+        padding       : 10px 14px;
+        font-family   : 'Inter', sans-serif;
+        font-size     : 11.5px;
+        color         : #7a5c00;
+        line-height   : 1.6;
+        display       : none;
+      }
+      #bias_banner_text { display: block; }
+
+      /* ── Bias summary bar (above table) ──────────────────────── */
+      .bias-summary-bar {
+        display       : flex;
+        align-items   : center;
+        flex-wrap     : wrap;
+        gap           : 8px;
+        padding       : 10px 12px;
+        background    : #f0f7ff;
+        border        : 1px solid #cce0f5;
+        border-radius : 8px;
+        margin-bottom : 14px;
+      }
+      .bias-bar-none {
+        background : #f5f5f7;
+        border-color: #e8e8ed;
+      }
+      .bias-bar-title {
+        font-family : 'Inter', sans-serif;
+        font-size   : 11px;
+        font-weight : 600;
+        color       : #6e6e73;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+      }
+      .bias-badge {
+        font-family   : 'JetBrains Mono', monospace;
+        font-size     : 10.5px;
+        color         : #0071e3;
+        background    : #ffffff;
+        border        : 1px solid #cce0f5;
+        border-radius : 20px;
+        padding       : 3px 10px;
+        font-weight   : 500;
+      }
+
       /* ── Scrollbars ──────────────────────────────────────────── */
       ::-webkit-scrollbar { width: 5px; height: 5px; }
       ::-webkit-scrollbar-track { background: transparent; }
@@ -454,11 +503,16 @@ ui <- fluidPage(
         div(class = "form-group",
           tags$label("Residual Variance"),
           div(id = "residual_display",
-              style = "font-family:'IBM Plex Mono',monospace; font-size:13px;
-                       color:#6ab0ff; padding:6px 10px; background:#0d0f14;
-                       border:1px solid #253045; border-radius:3px;",
-              "0.750")
+              style = "font-family:'JetBrains Mono',monospace; font-size:13px;
+                       color:#0071e3; padding:7px 11px; background:#f0f7ff;
+                       border:1px solid #cce0f5; border-radius:8px;",
+              "0.750  (= 1 − 0.50²)")
         )
+      ),
+
+      # — Bias warning banner (shown reactively when flags trigger) —
+      div(id = "bias_banner",
+        span(id = "bias_banner_text")
       ),
 
       # — Simulation settings —
