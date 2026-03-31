@@ -1,10 +1,10 @@
-# =============================================================================
+
 # server.R — Reactive server logic
-# =============================================================================
+
 
 server <- function(input, output, session) {
 
-  # ── Derived: items_per_factor ─────────────────────────────────────────────
+  # Derived: items_per_factor 
   items_per_factor <- reactive({
     n <- req(input$n_factors)
     sapply(seq_len(n), function(f) {
@@ -13,20 +13,20 @@ server <- function(input, output, session) {
     })
   })
 
-  # ── Derived: residual variance ────────────────────────────────────────────
+  # Derived: residual variance 
   residual_var <- reactive({
     lv <- req(input$loading_value)
     round(1 - lv^2, 6)
   })
 
-  # ── Update residual display ───────────────────────────────────────────────
+  # Update residual display 
   observe({
     rv <- residual_var()
     shinyjs::html("residual_display",
                   sprintf("%.4f  (= 1 − %.2f²)", rv, input$loading_value))
   })
 
-  # ── Derived: active bias flags ────────────────────────────────────────────
+  # Derived: active bias flags 
   active_flags <- reactive({
     get_bias_flags(
       loading_value    = req(input$loading_value),
@@ -36,7 +36,7 @@ server <- function(input, output, session) {
     )
   })
 
-  # ── Update bias warning banner ────────────────────────────────────────────
+  # Update bias warning banner 
   observe({
     flags <- active_flags()
     msgs  <- character(0)
@@ -65,7 +65,7 @@ server <- function(input, output, session) {
     }
   })
 
-  # ── Render dynamic items-per-factor inputs ────────────────────────────────
+  # Render dynamic items-per-factor inputs 
   observe({
     n <- req(input$n_factors)
     output_html <- lapply(seq_len(n), function(f) {
@@ -79,7 +79,7 @@ server <- function(input, output, session) {
              immediate = TRUE, session = session)
   })
 
-  # ── Live model preview ────────────────────────────────────────────────────
+  # Live model preview 
   observe({
     n   <- req(input$n_factors)
     ipf <- items_per_factor()
@@ -94,14 +94,14 @@ server <- function(input, output, session) {
     )
   })
 
-  # ── Validate N range ──────────────────────────────────────────────────────
+  # Validate N range 
   n_range_valid <- reactive({
     as.integer(input$n_range_from) < as.integer(input$n_range_to) &&
       as.integer(input$n_step) > 0
   })
   observe({ shinyjs::toggleState("run_sim", condition = n_range_valid()) })
 
-  # ── Simulation state ──────────────────────────────────────────────────────
+  # Simulation state 
   sim_state <- reactiveValues(
     running     = FALSE,
     results     = NULL,
@@ -112,7 +112,7 @@ server <- function(input, output, session) {
     nRep_used   = NULL
   )
 
-  # ── Run simulation ────────────────────────────────────────────────────────
+  # Run simulation 
   observeEvent(input$run_sim, {
     req(n_range_valid())
 
@@ -173,7 +173,7 @@ server <- function(input, output, session) {
 
     shinyjs::disable("run_sim")
 
-    # ── Async parallel block ──────────────────────────────────────────────
+    # Async parallel block 
     future_promise({
 
       furrr::future_map_dfr(
@@ -231,7 +231,7 @@ server <- function(input, output, session) {
     NULL
   })
 
-  # ── Results UI ────────────────────────────────────────────────────────────
+  #  Results UI 
   output$results_ui <- renderUI({
 
     if (sim_state$running) {
@@ -365,7 +365,7 @@ server <- function(input, output, session) {
     )
   })
 
-  # ── Table ─────────────────────────────────────────────────────────────────
+  # Table 
   output$result_table <- DT::renderDataTable({
     req(sim_state$results)
     tbl   <- sim_state$results
@@ -421,7 +421,7 @@ server <- function(input, output, session) {
       )
   }, server = FALSE)
 
-  # ── Plot ──────────────────────────────────────────────────────────────────
+  # Plot 
   output$result_plot <- renderPlot({
     req(sim_state$results)
     tbl <- sim_state$results[!is.na(sim_state$results$Min_Power), ]

@@ -1,6 +1,5 @@
-# =============================================================================
-# global.R — Libraries, parallel backend, model builders, simulation worker
-# =============================================================================
+
+# Libraries, parallel backend, model builders, simulation worker
 
 library(shiny)
 library(simsem)
@@ -13,17 +12,15 @@ library(future)
 library(promises)
 library(furrr)
 
-# ---------------------------------------------------------------------------
+
 # Parallel backend — cores - 1, minimum 1
-# ---------------------------------------------------------------------------
+
 n_workers <- max(1L, parallel::detectCores(logical = FALSE) - 1L)
 plan(multisession, workers = n_workers)
 
-# =============================================================================
 # Bias flag detection
 # These three functions encode the conditions under which Wolf et al.-style
 # bias checking is activated.  They operate on raw user inputs, not sim output.
-# =============================================================================
 
 # Flag 1 — factor correlation at or beyond boundary values
 flag_cor_boundary <- function(factor_cor, n_factors) {
@@ -50,9 +47,9 @@ get_bias_flags <- function(loading_value, factor_cor, n_factors,
   )
 }
 
-# =============================================================================
+
 # Helper: Build population model string dynamically
-# =============================================================================
+
 build_population_model <- function(n_factors, items_per_factor,
                                    loading_value, residual_var, factor_cor) {
   lines    <- character(0)
@@ -83,9 +80,9 @@ build_population_model <- function(n_factors, items_per_factor,
   paste(lines, collapse = "\n")
 }
 
-# =============================================================================
+
 # Helper: Build analysis model string (freely estimated)
-# =============================================================================
+
 build_analysis_model <- function(n_factors, items_per_factor) {
   lines    <- character(0)
   item_idx <- 1L
@@ -108,21 +105,20 @@ build_analysis_model <- function(n_factors, items_per_factor) {
   paste(lines, collapse = "\n")
 }
 
-# =============================================================================
 # Helper: Compute relative bias from simsem coef slot
 #
 # sim_obj@coef is a data.frame with one row per replication and one column
-# per free parameter.  We average across replications then compare to the
+# per free parameter.  The replications were averaged then compared to the
 # known population value.
 #
 # bias = (mean_estimated - population) / |population|   (relative)
 #
-# Returns a named list:
+# Returns a list:
 #   $max_loading_bias   — worst absolute relative bias across loading params
 #   $max_cor_bias       — worst absolute relative bias across factor correlations
 #   $bias_ok_loading    — TRUE if max loading bias < .05
 #   $bias_ok_cor        — TRUE if max cor    bias < .05
-# =============================================================================
+
 compute_bias <- function(sim_obj, loading_value, factor_cor,
                          n_factors, flags) {
 
@@ -140,7 +136,7 @@ compute_bias <- function(sim_obj, loading_value, factor_cor,
   # Column names encode parameter labels — e.g. "factor1=~x1", "factor1~~factor2"
   col_nms <- colnames(coef_mat)
 
-  # ── Loading bias (Flag 2: weak loadings) ──────────────────────────────────
+  # Loading bias (Flag 2: weak loadings) 
   if (flags["weak_loading"]) {
     loading_cols <- grep("=~", col_nms, value = TRUE)
     if (length(loading_cols) > 0) {
@@ -152,7 +148,7 @@ compute_bias <- function(sim_obj, loading_value, factor_cor,
     }
   }
 
-  # ── Factor correlation bias (Flag 1: boundary correlations) ──────────────
+  # Factor correlation bias (Flag 1: boundary correlations) 
   if (flags["cor_boundary"] && n_factors > 1L) {
     # Factor correlation columns use "~~" but NOT "x" (residuals use "~~" too)
     # Pattern: "factorN~~factorM"
@@ -171,12 +167,12 @@ compute_bias <- function(sim_obj, loading_value, factor_cor,
   out
 }
 
-# =============================================================================
+
 # Helper: Extract simulation summary for one N
 #
 # bias_flags — named logical vector from get_bias_flags()
 # loading_value, factor_cor, n_factors — needed for bias reference values
-# =============================================================================
+
 extract_summary <- function(sim_obj, n,
                             bias_flags    = c(cor_boundary  = FALSE,
                                               weak_loading  = FALSE,
@@ -185,16 +181,16 @@ extract_summary <- function(sim_obj, n,
                             factor_cor    = 0.3,
                             n_factors     = 1L) {
 
-  # ── Convergence ────────────────────────────────────────────────────────────
+  # Convergence 
   conv_rate <- mean(sim_obj@converged == 0, na.rm = TRUE)
 
-  # ── Power ──────────────────────────────────────────────────────────────────
+  # Power 
   pwr          <- getPower(sim_obj, alpha = .05)
   loading_rows <- grepl("=~", names(pwr))
   min_power    <- if (any(loading_rows)) min(as.numeric(pwr)[loading_rows],
                                              na.rm = TRUE) else NA_real_
 
-  # ── Fit indices ────────────────────────────────────────────────────────────
+  # Fit indices 
   fit_df <- as.data.frame(summaryFit(sim_obj))
 
   get_fit_index <- function(df, nm) {
@@ -217,11 +213,11 @@ extract_summary <- function(sim_obj, n,
   mean_rmsea <- get_fit_index(fit_df, "rmsea")
   mean_cfi   <- get_fit_index(fit_df, "cfi")
 
-  # ── Bias computation (only when flags triggered) ───────────────────────────
+  # Bias computation (only when flags triggered) 
   bias <- compute_bias(sim_obj, loading_value, factor_cor,
                        n_factors, bias_flags)
 
-  # ── Adequacy judgment ──────────────────────────────────────────────────────
+  # Adequacy judgment 
   # Core criteria (always applied)
   core_ok <- !is.na(min_power) && !is.na(mean_rmsea) && !is.na(mean_cfi) &&
     min_power  >= 0.80 &&
@@ -243,7 +239,7 @@ extract_summary <- function(sim_obj, n,
 
   adequate <- core_ok && conv_ok && loading_bias_ok && cor_bias_ok
 
-  # ── Build failure reason string (for display) ──────────────────────────────
+  # Build failure reason string (for display) 
   reasons <- character(0)
   if (!is.na(min_power)  && min_power  < 0.80) reasons <- c(reasons, "Power")
   if (!is.na(mean_rmsea) && mean_rmsea >= 0.05) reasons <- c(reasons, "RMSEA")
@@ -277,9 +273,8 @@ extract_summary <- function(sim_obj, n,
   )
 }
 
-# =============================================================================
 # Worker: runs ONE candidate N in a parallel process
-# =============================================================================
+
 run_one_n <- function(n, pop_model, ana_model, nRep, seed_val,
                       bias_flags, loading_value, factor_cor, n_factors) {
 
