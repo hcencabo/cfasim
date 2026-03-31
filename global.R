@@ -1,6 +1,5 @@
-# =============================================================================
 # global.R — Loaded once at app startup (shared by ui.R and server.R)
-# =============================================================================
+
 
 library(shiny)
 library(simsem)
@@ -13,16 +12,14 @@ library(future)          # parallel backend
 library(promises)        # async promise chaining
 library(furrr)           # parallel purrr — future_map
 
-# ---------------------------------------------------------------------------
 # Parallel backend: use all available cores minus one (keep UI responsive).
 # Falls back gracefully to sequential if only 1 core is detected.
-# ---------------------------------------------------------------------------
+
 n_workers <- max(1L, parallel::detectCores(logical = FALSE) - 1L)
 plan(multisession, workers = n_workers)
 
-# =============================================================================
 # Helper: Build population model string dynamically
-# =============================================================================
+
 build_population_model <- function(n_factors, items_per_factor,
                                    loading_value, residual_var, factor_cor) {
 
@@ -55,9 +52,9 @@ build_population_model <- function(n_factors, items_per_factor,
   paste(lines, collapse = "\n")
 }
 
-# =============================================================================
+
 # Helper: Build analysis model string (freely estimated)
-# =============================================================================
+
 build_analysis_model <- function(n_factors, items_per_factor) {
 
   lines    <- character(0)
@@ -81,9 +78,9 @@ build_analysis_model <- function(n_factors, items_per_factor) {
   paste(lines, collapse = "\n")
 }
 
-# =============================================================================
+
 # Helper: Extract simulation summary for one N
-# =============================================================================
+
 extract_summary <- function(sim_obj, n) {
 
   conv_rate    <- mean(sim_obj@converged == 0, na.rm = TRUE)
@@ -129,11 +126,11 @@ extract_summary <- function(sim_obj, n) {
   )
 }
 
-# =============================================================================
+
 # Worker: runs ONE candidate N entirely — designed to be sent to a parallel
 # worker via furrr::future_map.  All arguments are plain R objects (no
 # Shiny reactives) so they serialise cleanly across processes.
-# =============================================================================
+
 run_one_n <- function(n, pop_model, ana_model, nRep, seed_val) {
 
   # Each worker gets a *different* but deterministic seed so results are

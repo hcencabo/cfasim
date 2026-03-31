@@ -1,4 +1,4 @@
-# =============================================================================
+
 # app.R — Entry point
 # Run with: shiny::runApp("path/to/cfa_samplesize_app")
 #
@@ -8,7 +8,7 @@
 #     "shinycssloaders", "shinyjs",
 #     "future", "promises", "furrr"   # <-- parallel execution
 #   ))
-# =============================================================================
+
 
 source("global.R")
 source("ui.R")

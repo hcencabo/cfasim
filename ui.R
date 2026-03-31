@@ -471,9 +471,9 @@ ui <- fluidPage(
         selectInput("n_step",  "Step",
                     choices = c(25, 50, 100), selected = 50),
         selectInput("nRep", "Replications per N",
-                    choices = c("200" = 200, "500 (recommended)" = 500,
+                    choices = c("200 (first pass)" = 200, "500 (recommended)" = 500,
                                 "1000 (publication)" = 1000),
-                    selected = 500),
+                    selected = 200),
         numericInput("seed", "Random Seed",
                      value = 2024, min = 1, max = 99999, step = 1)
       ),
