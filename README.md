@@ -1,5 +1,12 @@
 # CFA Sample Size Simulator
 
+Determining adequate sample size for CFA is one of the most consequential
+yet little understood decisions in educational and social science research.
+Rules-of-thumb are often inadequate and sample size requirements vary from as few as 
+30 to over 460 depending on model structure, loading strength, and factor correlations. 
+This Shiny app makes model-specific Monte Carlo sample size planning accessible without 
+requiring serious custom simulation R- scripts.
+
 Monte Carlo power analysis for Confirmatory Factor Analysis (CFA) using
 **simsem** and **lavaan**, implementing the Wolf et al. (2013) method
 with targeted bias checking for high-risk parameter combinations.
