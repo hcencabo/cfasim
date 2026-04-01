@@ -119,7 +119,6 @@ assessment, use **1000 replications**.
 
 ## Reference
 
-Wolf, E. J., Harrington, K. M., Clark, S. L., & Miller, M. W. (2013).
-Sample size requirements for structural equation models: An evaluation of
-power, bias, and solution propriety.
-*Educational and Psychological Measurement, 73*(6), 913–934.
+Wolf, E. J., Harrington, K. M., Clark, S. L., & Miller, M. W. (2013). Sample size requirements for structural equation models: An evaluation of power, bias, and solution propriety. *Educational and Psychological Measurement*, *73*(6), 913–934. https://doi.org/10.1177/0013164413495237
+
+
