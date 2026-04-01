@@ -17,12 +17,12 @@ with targeted bias checking for high-risk parameter combinations.
 
 ```
 cfa_samplesize_app/
-├── app.R        — Entry point
+├── app.R        
 ├── global.R     — Libraries, parallel backend, model builders,
 │                  bias flag detection, simulation worker
-├── ui.R         — Shiny UI (Apple-style light theme, bias banner)
+├── ui.R         — Shiny UI 
 ├── server.R     — Reactive server logic (async parallel, bias-aware)
-└── README.md    — This file
+└── README.md    
 ```
 
 ---
@@ -117,7 +117,15 @@ assessment, use **1000 replications**.
 
 ---
 
-## Reference
+## Citation
+
+If you use this app in your research, please cite it as:
+
+Encabo, H. C. (2026). *CFA Sample Size Simulator: A Monte Carlo power
+analysis tool for confirmatory factor analysis* [R Shiny application].
+GitHub. https://github.com/yourusername/yourrepo
+
+Please also cite the underlying method:
 
 Wolf, E. J., Harrington, K. M., Clark, S. L., & Miller, M. W. (2013). Sample size requirements for structural equation models: An evaluation of power, bias, and solution propriety. *Educational and Psychological Measurement*, *73*(6), 913–934. https://doi.org/10.1177/0013164413495237
 
