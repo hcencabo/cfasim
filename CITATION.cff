@@ -1,0 +1,72 @@
+cff-version: 1.2.0
+message: "If you use this software in your research, please cite it using the metadata below."
+license: GPL-3.0
+repository-code: "https://github.com/hcencabo/cfasim"
+
+title: "CFA Sample Size Simulator"
+abstract: >
+  An interactive R Shiny application for model-specific sample size
+  planning in confirmatory factor analysis (CFA) using Monte Carlo
+  simulation. Implements the Wolf et al. (2013) method via simsem
+  and lavaan, with parallel execution across candidate sample sizes
+  and conditional bias diagnostics for high-risk parameter
+  combinations including weak loadings, boundary factor correlations,
+  and minimally identified models.
+
+version: "1.0.0"
+date-released: "2026-04-01"
+
+authors:
+  - family-names: "Encabo"
+    given-names: "Henry C."
+
+keywords:
+  - confirmatory factor analysis
+  - CFA
+  - sample size
+  - power analysis
+  - Monte Carlo simulation
+  - structural equation modeling
+  - R
+  - Shiny
+  - psychometrics
+  - lavaan
+  - simsem
+
+references:
+  - type: article
+    title: "Sample size requirements for structural equation models: An evaluation of power, bias, and solution propriety"
+    authors:
+      - family-names: "Wolf"
+        given-names: "Erika J."
+      - family-names: "Harrington"
+        given-names: "Kelly M."
+      - family-names: "Clark"
+        given-names: "Shaunna L."
+      - family-names: "Miller"
+        given-names: "Mark W."
+    journal: "Educational and Psychological Measurement"
+    volume: 73
+    issue: 6
+    start: 913
+    end: 934
+    year: 2013
+    doi: "10.1177/0013164413495237"
+
+  - type: software
+    title: "simsem: SIMulated Structural Equation Modeling"
+    authors:
+      - family-names: "Pornprasertmanit"
+        given-names: "Sunthud"
+      - family-names: "Miller"
+        given-names: "Patrick"
+      - family-names: "Schoemann"
+        given-names: "Alexander"
+    url: "https://cran.r-project.org/package=simsem"
+
+  - type: software
+    title: "lavaan: Latent Variable Analysis"
+    authors:
+      - family-names: "Rosseel"
+        given-names: "Yves"
+    url: "https://lavaan.ugent.be"
