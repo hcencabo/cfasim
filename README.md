@@ -25,7 +25,23 @@ cfasim/
 
 ---
 
-## Installation
+## Installation & Setup
+
+### Option 1 — Clone the repository (recommended)
+
+Make sure you have [Git](https://git-scm.com/) installed, then run in your
+terminal:
+```bash
+git clone https://github.com/hcencabo/cfasim.git
+cd cfasim
+```
+
+### Option 2 — Download as ZIP
+
+1. Download ZIP
+2. Extract the ZIP file to a folder of your choice
+
+Install the following packages
 
 ```r
 install.packages(c(
