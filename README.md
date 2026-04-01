@@ -16,7 +16,7 @@ with targeted bias checking for high-risk parameter combinations.
 ## File Structure
 
 ```
-cfa_samplesize_app/
+cfasim/
 ├── app.R        
 ├── global.R     — Libraries, parallel backend, model builders,
 │                  bias flag detection, simulation worker
@@ -42,7 +42,7 @@ install.packages(c(
 ## Running the App
 
 ```r
-shiny::runApp("path/to/cfa_samplesize_app")
+shiny::runApp("path/to/cfasim")
 ```
 
 ---
