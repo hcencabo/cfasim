@@ -7,9 +7,7 @@ Rules-of-thumb are often inadequate and sample size requirements vary from as fe
 This Shiny app makes model-specific Monte Carlo sample size planning accessible without 
 requiring serious custom simulation R- scripts.
 
-Monte Carlo power analysis for Confirmatory Factor Analysis (CFA) using
-**simsem** and **lavaan**, implementing the Wolf et al. (2013) method
-with targeted bias checking for high-risk parameter combinations.
+It implements Monte Carlo power analysis for Confirmatory Factor Analysis (CFA) using **simsem** and **lavaan**,based from Wolf et al. (2013), with targeted bias checks for high-risk parameter combinations.
 
 ---
 
