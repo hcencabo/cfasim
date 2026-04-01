@@ -123,7 +123,7 @@ If you use this app in your research, please cite it as:
 
 Encabo, H. C. (2026). *CFA Sample Size Simulator: A Monte Carlo power
 analysis tool for confirmatory factor analysis* [R Shiny application].
-GitHub. https://github.com/yourusername/yourrepo
+GitHub. https://github.com/hcencabo/cfasim
 
 Please also cite the underlying method:
 
