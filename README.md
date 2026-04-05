@@ -1,8 +1,8 @@
 # CFA Sample Size Simulator
 
-Determining an adequate sample size for CFA is one of the most misunderstood decisions in educational and social science research. Many researchers rely on rules of thumb, which are frequently inadequate. In practice, sample size requirements can vary widely depending on model structure, loading strength, and factor correlations. This Shiny app makes model-specific Monte Carlo sample size planning accessible without requiring custom R simulation scripts.
+Determining an adequate sample size for CFA is one of the most misunderstood decisions in educational and social science research. Many researchers rely on rules of thumb, which are frequently inadequate. In practice, sample size requirements can vary widely depending on model structure, loading strength, and factor correlations. This Shiny app makes model-specific Monte Carlo sample size planning for first-order CFA models accessible without requiring custom R simulation scripts.
 
-It implements Monte Carlo power analysis for Confirmatory Factor Analysis (CFA) using **simsem** and **lavaan**,based from Wolf et al. (2013), with targeted bias checks for high-risk parameter combinations.
+It implements Monte Carlo power analysis for first-order Confirmatory Factor Analysis (CFA) using **simsem** and **lavaan**,based from Wolf et al. (2013), with targeted bias checks for high-risk parameter combinations. Higher-order  models are not currently supported.
 
 ---
 
